@@ -1,0 +1,6 @@
+{
+    "watch": "src",
+    "ext": ".ts",
+    "ignore": ["build"],
+    "exec": "npm run build && electron build/main.js"
+  }

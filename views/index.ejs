@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>TomCo HQ</title>
+        <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body style="background: green;">
+        <h1>Hello, <%= viewTest %>!</h1>
+        <h3>Script: <div id='scriptTest'></div></h3>
+        <hr>
+        <form id="list-buckets">
+            <button type="button" id="list-buckets-submit">List Buckets</button>
+            <table id="list-buckets-list"></table>
+        </form>
+        </br>
+        <form id="find-bucket">
+            <input required id="find-bucket-input" type="text" placeholder="Bucket Name"/>
+            <button type="button" id="find-bucket-submit">Find Bucket</button>
+            <div id="find-bucket-message"></div>
+        </form>
+        </br>
+        <form id="create-bucket">
+            <input id="create-bucket-input" type="text" placeholder="Bucket Name"/>
+            <button type="button" id="create-bucket-submit">Create Bucket</button>
+            <div id="create-bucket-message"></div>
+        </form>
+        </br>
+        <form id="list-objects">
+            <input required id="list-objects-input" type="text" placeholder="Bucket Name"/>
+            <button type="button" id="list-objects-submit">List Objects</button>
+            <table id="list-objects-list"></table>
+        </form>
+        </br>
+        <form id="find-object">
+            <input required id="find-object-input-bucket" type="text" placeholder="Bucket Name"/></br>
+            <input required id="find-object-input-object" type="text" placeholder="Object Name"/>
+            <button type="button" id="find-object-submit">Find Object</button>
+            <div id="find-object-message"></div>
+        </form>
+        </br>
+        <form id="upload-file">
+            <input id="upload-file-input-bucket" type="text" placeholder="Bucket Name"/>
+            <button type="button" id="upload-file-submit">Upload File</button></br>
+            <input id="upload-file-input-file" type="file"/>
+            <div id="upload-file-message"></div>
+        </form>
+        </br>
+        <form id="download-file">
+            <input required id="download-file-input-bucket" type="text" placeholder="Bucket Name"/></br>
+            <input required id="download-file-input-object" type="text" placeholder="Object Name"/>
+            <button type="button" id="download-file-submit">Download File</button></br>
+            <div id="download-file-message"></div>
+        </form>
+        </br>
+        <form id="delete-bucket">
+            <input required id="delete-bucket-input" type="text" placeholder="Bucket Name"/>
+            <button type="button" id="delete-bucket-submit">Delete Bucket</button>
+            <div id="delete-bucket-message"></div>
+        </form>
+        </br>
+        <form id="empty-bucket">
+            <input required id="empty-bucket-input" type="text" placeholder="Bucket Name"/>
+            <button type="button" id="empty-bucket-submit">Empty Bucket</button>
+            <div id="empty-bucket-message"></div>
+        </form>
+    </body>
+</html>
