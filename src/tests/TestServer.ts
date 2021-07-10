@@ -7,7 +7,7 @@ export class TestServer {
     private router: Router;
     public app: Express;
     
-    public constructor(port: number = 3000, hostname: string = '127.0.0.1') {
+    public constructor(port = 3000, hostname = '127.0.0.1') {
         this.router = express.Router();
         this.app = express();
         this.server = new http.Server(this.app);

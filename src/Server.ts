@@ -4,8 +4,8 @@ import { DeleteObjectsRequest } from 'aws-sdk/clients/s3';
 
 export class Server extends ServerSetup {
 
-    public constructor(port?: string, hostname?: string, appName?: string) {
-        super(port, hostname, appName);
+    constructor(port?: string, hostname?: string) {
+        super(port, hostname);
         this.getRequests();
         this.postRequests();
         this.deleteRequests();
@@ -23,7 +23,7 @@ export class Server extends ServerSetup {
             GET: ${req.url},
             Host: ${req.hostname},
             IP: ${req.ip},
-            Type: ${req.protocol!.toUpperCase()},
+            Type: ${req.protocol?.toUpperCase()},
             Status: 200.`
             );
         });
@@ -31,7 +31,7 @@ export class Server extends ServerSetup {
         this.router.get('/listBuckets', async (req:Request, res:Response) => {
             this.txtLogger.writeToLogFile('Request Made: GET /listBuckets');
 
-            let data: number | string[] = await this.s3Client.listOrFindBuckets();
+            const data: number | string[] = await this.s3Client.listOrFindBuckets();
             if (typeof data === "number") res.status(data).send();
             else res.status(200).send(data);
 
@@ -40,7 +40,7 @@ export class Server extends ServerSetup {
             GET: ${req.url},
             Host: ${req.hostname},
             IP: ${req.ip},
-            Type: ${req.protocol!.toUpperCase()},
+            Type: ${req.protocol?.toUpperCase()},
             Status: ${(typeof data === "number") ? data : 200}.`
             );
         });
@@ -48,7 +48,7 @@ export class Server extends ServerSetup {
         this.router.get('/findBucket', async (req:Request, res:Response) => {
             this.txtLogger.writeToLogFile('Request Made: GET /findBucket');
 
-            let data: number | string[] = await this.s3Client.listOrFindBuckets(req.query['bucket']!.toString());
+            const data: number | string[] = await this.s3Client.listOrFindBuckets(`${req.query['bucket']}`);
             if (typeof data === "number") res.status(data).send();
             else res.status(404).send();
 
@@ -57,7 +57,7 @@ export class Server extends ServerSetup {
             GET: ${req.url},
             Host: ${req.hostname},
             IP: ${req.ip},
-            Type: ${req.protocol!.toUpperCase()},
+            Type: ${req.protocol?.toUpperCase()},
             Status: ${(typeof data === "number") ? data : 404}.`
             );
         });
@@ -65,7 +65,7 @@ export class Server extends ServerSetup {
         this.router.get('/listObjects', async (req:Request, res:Response) => {
             this.txtLogger.writeToLogFile('Request Made: GET /listObjects');
 
-            let data: number | string[] | DeleteObjectsRequest = await this.s3Client.listOrFindObjects(req.query['bucket']!.toString());
+            const data: number | string[] | DeleteObjectsRequest = await this.s3Client.listOrFindObjects(`${req.query['bucket']}`);
             if (typeof data === "number") res.status(data).send();
             else res.status(200).send(data);
 
@@ -74,7 +74,7 @@ export class Server extends ServerSetup {
             GET: ${req.url},
             Host: ${req.hostname},
             IP: ${req.ip},
-            Type: ${req.protocol!.toUpperCase()},
+            Type: ${req.protocol?.toUpperCase()},
             Status: ${(typeof data === "number") ? data : 200}.`
             );
         });
@@ -82,7 +82,7 @@ export class Server extends ServerSetup {
         this.router.get('/findObject', async (req:Request, res:Response) => {
             this.txtLogger.writeToLogFile('Request Made: GET /findObject');
 
-            let data: number | string[] | DeleteObjectsRequest = await this.s3Client.listOrFindObjects(req.query['bucket']!.toString(), req.query['object']!.toString());
+            const data: number | string[] | DeleteObjectsRequest = await this.s3Client.listOrFindObjects(`${req.query['bucket']}`, `${req.query['object']}`);
             if (typeof data === "number") res.status(data).send();
             else res.status(404).send();
 
@@ -91,17 +91,18 @@ export class Server extends ServerSetup {
             GET: ${req.url},
             Host: ${req.hostname},
             IP: ${req.ip},
-            Type: ${req.protocol!.toUpperCase()},
+            Type: ${req.protocol?.toUpperCase()},
             Status: ${(typeof data === "number") ? data : 404}.`
             );
         });
     }
 
+
     private postRequests(): void {
         this.router.post('/createBucket', async (req:Request, res:Response) => {
             this.txtLogger.writeToLogFile('Request Made: POST /createBucket');
 
-            let data: number = await this.s3Client.createBucket(req.body['bucket']);
+            const data: number = await this.s3Client.createBucket(req.body['bucket']);
             res.status(data).send();
 
             this.txtLogger.writeToLogFile(
@@ -109,7 +110,7 @@ export class Server extends ServerSetup {
             POST: ${req.url},
             Host: ${req.hostname},
             IP: ${req.ip},
-            Type: ${req.protocol!.toUpperCase()},
+            Type: ${req.protocol?.toUpperCase()},
             Status: ${data}.`
             );
         });
@@ -117,7 +118,7 @@ export class Server extends ServerSetup {
         this.router.post('/uploadFile', async (req:Request, res:Response) => {
             this.txtLogger.writeToLogFile('Request Made: POST /uploadFile');
             
-            let data: number = await this.s3Client.uploadFile(req.body['filePath'], req.body['bucket']);
+            const data: number = await this.s3Client.uploadFile(req.body['filePath'], req.body['bucket']);
             res.status(data).send();
 
             this.txtLogger.writeToLogFile(
@@ -125,7 +126,7 @@ export class Server extends ServerSetup {
             POST: ${req.url},
             Host: ${req.hostname},
             IP: ${req.ip},
-            Type: ${req.protocol!.toUpperCase()},
+            Type: ${req.protocol?.toUpperCase()},
             Status: ${data}.`
             );
         });
@@ -133,7 +134,7 @@ export class Server extends ServerSetup {
         this.router.post('/downloadFile', async (req:Request, res:Response) => {
             this.txtLogger.writeToLogFile('Request Made: POST /downloadFile');
             
-            let data: number = await this.s3Client.downloadFile(req.body['file'], req.body['bucket']);
+            const data: number = await this.s3Client.downloadFile(req.body['file'], req.body['bucket']);
             res.status(data).send();
 
             this.txtLogger.writeToLogFile(
@@ -141,17 +142,18 @@ export class Server extends ServerSetup {
             POST: ${req.url},
             Host: ${req.hostname},
             IP: ${req.ip},
-            Type: ${req.protocol!.toUpperCase()},
+            Type: ${req.protocol?.toUpperCase()},
             Status: ${data}.`
             );
         });
     }
 
+
     private deleteRequests(): void {
         this.router.delete('/deleteBucket', async (req:Request, res:Response) => {
             this.txtLogger.writeToLogFile('Request Made: DEL /deleteBucket');
 
-            let data: number = await this.s3Client.deleteBucket(req.body['bucket']);
+            const data: number = await this.s3Client.deleteBucket(req.body['bucket']);
             res.status(data).send();
 
             this.txtLogger.writeToLogFile(
@@ -159,7 +161,7 @@ export class Server extends ServerSetup {
             DELETE: ${req.url},
             Host: ${req.hostname},
             IP: ${req.ip},
-            Type: ${req.protocol!.toUpperCase()},
+            Type: ${req.protocol?.toUpperCase()},
             Status: ${data}.`
             );
         });
@@ -167,7 +169,7 @@ export class Server extends ServerSetup {
         this.router.delete('/emptyBucket', async (req:Request, res:Response) => {
             this.txtLogger.writeToLogFile('Request Made: DEL /emptyBucket');
 
-            let data: number = await this.s3Client.emptyBucket(req.body['bucket']);
+            const data: number = await this.s3Client.emptyBucket(req.body['bucket']);
             res.status(data).send();
 
             this.txtLogger.writeToLogFile(
@@ -175,7 +177,7 @@ export class Server extends ServerSetup {
             DELETE: ${req.url},
             Host: ${req.hostname},
             IP: ${req.ip},
-            Type: ${req.protocol!.toUpperCase()},
+            Type: ${req.protocol?.toUpperCase()},
             Status: ${data}.`
             );
         });

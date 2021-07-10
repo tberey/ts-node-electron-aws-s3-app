@@ -1,0 +1,33 @@
+{
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "rules": {
+        "@typescript-eslint/ban-types": ["error",
+            {
+                "types": {
+                    "object": false
+                },
+                "extendDefaults": true
+            }
+        ],
+        "no-console": 1, // 0 = Off, 1 = Warn (pass), 2 = Error (fail)
+        "prefer-promise-reject-errors": 1,
+        "no-extra-parens": 0,
+        "no-loss-of-precision": 1,
+        "no-promise-executor-return":1,
+        "no-unreachable-loop": 1,
+        "no-template-curly-in-string": 1,
+        "no-unsafe-optional-chaining": 1,
+        "no-useless-backreference": 1,
+        "require-atomic-updates": 1,
+        "no-await-in-loop": 1
+    }
+}
