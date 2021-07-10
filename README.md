@@ -137,7 +137,7 @@ This is a electron application, which means it runs on your system, rather than 
 
 Logginf Sample:
 
-![Screenshot#1](https://github.com/tberey/tomco-hq/blob/development/screenshots/local-logs-sample.png?raw=true)
+![Screenshot#1](https://github.com/tberey/ts-node-electron-aws-s3-app/blob/development/screenshots/local-logs-sample1.png?raw=true)
 
 <br><hr><br>
 
