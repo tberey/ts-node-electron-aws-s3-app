@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+/* eslint-disable */
 window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('scriptTest')!.innerHTML = 'SUCCESS';
 
@@ -217,3 +218,4 @@ window.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+/* eslint-enable */

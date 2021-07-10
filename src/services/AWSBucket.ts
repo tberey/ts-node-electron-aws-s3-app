@@ -9,15 +9,17 @@ import fs from 'fs';
 export class AWSBucket {
 
     private AWS_S3: S3;
-    private fullFileName: any;
+    private fullFileName: string;
 
     private txtLogger: SimpleTxtLogger;
     private rollbarLogger: Rollbar;
 
     // Initialise the AWS Connection and Client.
-    public constructor(txtLogger: SimpleTxtLogger, rollbarLogger: Rollbar) {
-        this.txtLogger = txtLogger
+    constructor(txtLogger: SimpleTxtLogger, rollbarLogger: Rollbar) {
+        this.txtLogger = txtLogger;
         this.rollbarLogger = rollbarLogger;
+
+        this.fullFileName = '';
 
         aws.config.update({  region: process.env['AWS_REGION']  });
         this.AWS_S3 = new aws.S3({
@@ -30,16 +32,13 @@ export class AWSBucket {
 
     // S3 Bucket Infrastructure Methods: ----------------------------------------------------------------------------------------------
 
-    // If no argument is passed, returns an array containing a list of all buckets.
-    // If an argument for a bucket is passed, attempts to find and match that bucket by returning either 200 or 404.
-    // Return only a 500 on an error.
     public async listOrFindBuckets(findBucket?: string): Promise< number | string[] > {
-        if (findBucket) findBucket = new HelperService().bucketFormat(findBucket);
+        if (findBucket) findBucket = HelperService.bucketFormat(findBucket);
         this.txtLogger.writeToLogFile((findBucket) ? `Find bucket '${findBucket}'.` : 'List all buckets.');
 
         let status: number | undefined;
-        let bucketFound: boolean = false;
-        let bucketsArray: string[] = [];
+        let bucketFound = false;
+        const bucketsArray: string[] = [];
         
         await this.AWS_S3.listBuckets()
         .promise()
@@ -63,39 +62,40 @@ export class AWSBucket {
 
         if (status) return status;
         else if (bucketFound) {
-            this.txtLogger.writeToLogFile(`Found bucket '${findBucket}'`);
+            this.txtLogger.writeToLogFile(`Found bucket '${findBucket}'.`);
             return 200;
         }
         else if (bucketsArray.length) return bucketsArray;
-        this.txtLogger.writeToLogFile('No Buckets to List.');
+        findBucket ? this.txtLogger.writeToLogFile('Bucket Not Found.') : this.txtLogger.writeToLogFile('No Buckets to List.');
         return 404;
     }
 
-    // Lists all the objects in the passed bucket, which is returned in an array.
-    // If a second argument of true is supplied, specifying a delete request, it will return the list in a delete paramter.
-    // If there are no objects a 404 is returned, or if the bucket is not found, then returns 400. Returns a 500 on error.
     public async listOrFindObjects(bucketName: string, findObject?: string, emptyRequest?: boolean): Promise< number | string[] | S3.DeleteObjectsRequest > {
-        bucketName = new HelperService().bucketFormat(bucketName);
+        bucketName = HelperService.bucketFormat(bucketName);
         this.txtLogger.writeToLogFile((findObject) ? `Find object '${findObject}' in bucket '${bucketName}'.` : `List all objects in bucket '${bucketName}'.`);
 
-        let check: number | string[] = await this.listOrFindBuckets(bucketName);
+        const result: number | string[] = await this.listOrFindBuckets(bucketName);
+        const objectsArray: string[] = [];
 
-        if (check == 500) return 500;
-        else if (check !== 200) {
+        if (result == 500) return 500;
+        else if (result !== 200) {
             this.txtLogger.writeToLogFile(`Could not find Bucket '${bucketName}'. Failed to list Objects.`);
             return 400;
         }
 
         let status: number | undefined;
-        let objectFound: boolean = false;
-        let objectsArray: string[] = [];
-        let params: any;
+        let objectFound = false;
+        let params: S3.DeleteObjectsRequest = {
+            "Bucket": bucketName,
+            "Delete": {
+                "Objects": [ { "Key": '' } ]
+            }
+        };
         
         await this.AWS_S3.listObjectsV2({  Bucket: bucketName  })
         .promise()
         .then(async (data: S3.ListObjectsV2Output) => {
             if (!data.Contents?.length) return;
-            let helper: HelperService = new HelperService();
             this.txtLogger.writeToLogFile(`All Objects in Bucket '${bucketName}':`);
 
             data.Contents.forEach((val, i) => {
@@ -103,16 +103,16 @@ export class AWSBucket {
                 this.txtLogger.writeToLogFile(`${i+1}, '${val.Key}';`);
                 if (emptyRequest) return;
                 else if (!findObject) objectsArray.push(`'${val.Key}'`);
-                else if (findObject && helper.searchTerm(findObject) == helper.searchTerm(val.Key)) {
+                else if (findObject && HelperService.searchTerm(findObject) == HelperService.searchTerm(val.Key.toString())) {
                     objectFound = true;
-                    this.fullFileName = val.Key;
-                };
+                    this.fullFileName = val.Key.toString();
+                }
             });
-            
+
             if (emptyRequest) params = {
-                Bucket: bucketName,
-                Delete: {
-                    Objects: data.Contents.map(({ Key }) => ({ Key }))
+                "Bucket": bucketName,
+                "Delete": {
+                    "Objects": data.Contents.map((key) => ({ "Key": key['Key'] || 'ERROR'}))
                 }
             }
         })
@@ -133,21 +133,18 @@ export class AWSBucket {
         return 404;
     }
 
-    // Empties the target bucket that is supplied as an argument, returning a 200 on success.
-    // Returns either a 400 if the bucket could not be emptied, or a 500 on an error.
     public async emptyBucket(targetBucket: string): Promise<number> {
-        targetBucket = new HelperService().bucketFormat(targetBucket);
+        targetBucket = HelperService.bucketFormat(targetBucket);
         this.txtLogger.writeToLogFile(`Empty bucket '${targetBucket}'.`);
 
-        const params: any = await this.listOrFindObjects(targetBucket, undefined, true);
-
+        const params: number | S3.DeleteObjectsRequest | string[] = await this.listOrFindObjects(targetBucket, undefined, true);
         if (params == 400) {
             this.txtLogger.writeToLogFile(`Bucket does not exist. Failed to empty Bucket '${targetBucket}'.`);
             return 400;
         } else if (params == 404) {
             this.txtLogger.writeToLogFile(`Bucket already empty. Failed to empty Bucket '${targetBucket}'.`);
             return 400;
-        } else if (params == 500) return 500;
+        } else if (typeof params == 'number' || Array.isArray(params)) return 500;
 
         let status: number | undefined;
         
@@ -155,7 +152,7 @@ export class AWSBucket {
         .promise()
         .then((data: S3.DeleteObjectsOutput) => {
             this.txtLogger.writeToLogFile(`Emptying Bucket: '${targetBucket}'`);
-            data.Deleted!.forEach((val) => this.txtLogger.writeToLogFile(`Deleted, '${val.Key}';`));
+            data.Deleted?.forEach((val) => this.txtLogger.writeToLogFile(`Deleted, '${val.Key}';`));
         })
         .catch((err: Error) => {
             this.rollbarLogger.rollbarError(err);
@@ -168,25 +165,22 @@ export class AWSBucket {
         return 200;
     }
 
-    // Pass a bucket name to creates a new templated bucket.
-    // If no bucket is passed as an argument then default bucket, specified in .env file, is passed to be created.
-    // Returns 200 on request success, or 400 on duplicate bucket clonflict. Returns a 500 on error.
     public async createBucket(newBucket: string): Promise<number> {
-        newBucket =  new HelperService().bucketFormat(newBucket);
+        newBucket =  HelperService.bucketFormat(newBucket);
         this.txtLogger.writeToLogFile(`Create bucket '${newBucket}'.`);
 
-        let check: any = await this.listOrFindBuckets(newBucket) == 200;
+        const result: string[] | number | boolean = await this.listOrFindBuckets(newBucket) == 200;
 
-        if (check == 200) {
+        if (typeof result == 'number' && result == 200) {
             this.txtLogger.writeToLogFile(`Bucket '${newBucket}' already exists. Failed to create a new Bucket.`);
             return 400;
-        } else if (check == 500) return 500;
+        } else if (typeof result == 'number' && result == 500) return 500;
 
         let status: number | undefined;
-        const params = {
-            Bucket: newBucket,
-            CreateBucketConfiguration: {
-                LocationConstraint: process.env['AWS_REGION']
+        const params: S3.CreateBucketRequest = {
+            "Bucket": newBucket,
+            "CreateBucketConfiguration": {
+                "LocationConstraint": process.env['AWS_REGION']
             }
         };
         
@@ -203,20 +197,18 @@ export class AWSBucket {
         return 200;
     }
 
-    // Method to delete the bucket passed as the argument. Returns a 400 if the bucket cannot be deleted, otherwise returns 200.
-    // Returns 500 on an error.
     public async deleteBucket(deleteBucket: string): Promise<number> {
-        deleteBucket = new HelperService().bucketFormat(deleteBucket);
+        deleteBucket = HelperService.bucketFormat(deleteBucket);
         this.txtLogger.writeToLogFile(`Delete bucket '${deleteBucket}'.`);
 
-        let check: number | string[] | S3.DeleteObjectsRequest = await this.listOrFindObjects(deleteBucket);
+        const result: number | string[] | S3.DeleteObjectsRequest = await this.listOrFindObjects(deleteBucket);
 
-        if (check == 400) {
+        if (result == 400) {
             this.txtLogger.writeToLogFile (`Bucket does not exist. Failed to delete '${deleteBucket}'.`);
             return 400;
-        } else if (check == 500) {
+        } else if (result == 500) {
             return 500;
-        } else if (check !== 404) {
+        } else if (result !== 404) {
             this.txtLogger.writeToLogFile(`Bucket is not empty. Failed to delete '${deleteBucket}'.`);
             return 400;
         }
@@ -238,26 +230,23 @@ export class AWSBucket {
 
     // S3 File Management Methods: ----------------------------------------------------------------------------------------
 
-    // Uploads any file to the default bucket (specified in .env), that is passed as a first argument.
-    // If a bucket is passed as the optional second argument, will upload to that bucket, if it exists.
-    // Returns 400 if bucket is not found, or a 200 on success. Returns 500 on an error.
     public async uploadFile(filePath: string, bucketName: string): Promise<number> {
-        if (bucketName) bucketName = new HelperService().bucketFormat(bucketName);
-        let file: string = filePath.substr(filePath.lastIndexOf('/')+1);
+        if (bucketName) bucketName = HelperService.bucketFormat(bucketName);
+        const file: string = filePath.substr(filePath.lastIndexOf('/')+1);
         this.txtLogger.writeToLogFile(`Upload item '${filePath}' to bucket '${bucketName}'.`);
 
-        let check: number | string[] | S3.DeleteObjectsRequest = await this.listOrFindObjects(bucketName, file);
+        const result: number | string[] | S3.DeleteObjectsRequest = await this.listOrFindObjects(bucketName, file);
 
-        if (check == 200) {
+        if (result == 200) {
             this.txtLogger.writeToLogFile(`File already in bucket '${bucketName}'. Failed to upload '${file}'.`);
             return 400;
-        } else if (check == 400) {
+        } else if (result == 400) {
             this.txtLogger.writeToLogFile(`Bucket '${bucketName}' does not exist. Failed to upload '${file}'.`);
             return 400;
-        } else if (check == 500) return 500;
+        } else if (result == 500) return 500;
 
         let status: number | undefined;
-        let fsFile: fs.ReadStream = fs.createReadStream(filePath);
+        const fsFile: fs.ReadStream = fs.createReadStream(filePath);
         
 
         const params: S3.PutObjectRequest = {
@@ -282,18 +271,18 @@ export class AWSBucket {
     }
 
     public async downloadFile(fileName: string, bucketName: string): Promise<number> {
-        bucketName = new HelperService().bucketFormat(bucketName);
-        let fileExists: boolean = false;
+        bucketName = HelperService.bucketFormat(bucketName);
+        let fileExists = false;
         
-        let check: number | string[] | S3.DeleteObjectsRequest = await this.listOrFindObjects(bucketName, fileName);
+        const result: number | string[] | S3.DeleteObjectsRequest = await this.listOrFindObjects(bucketName, fileName);
 
-        if (check == 400) {
+        if (result == 400) {
             this.txtLogger.writeToLogFile(`Bucket '${bucketName}' does not exist. Failed to download '${fileName}'.`);
             return 400;
-        } else if (check == 404) {
+        } else if (result == 404) {
             this.txtLogger.writeToLogFile(`'${bucketName}' does not contain '${fileName}'. Failed to download file.`);
             return 400;
-        } else if (check == 500) return 500;
+        } else if (result == 500) return 500;
 
         if (!fs.existsSync('downloads')) fs.mkdirSync('downloads');//('../downloads')
 
@@ -310,7 +299,7 @@ export class AWSBucket {
         }
 
         let status: number | undefined;
-        let fsFile: fs.WriteStream = fs.createWriteStream(`downloads/${this.fullFileName}`);
+        const fsFile: fs.WriteStream = fs.createWriteStream(`downloads/${this.fullFileName}`);
         const params: S3.GetObjectRequest = {  Bucket: bucketName, Key: this.fullFileName  };
 
         await new Promise((resolve) => {
