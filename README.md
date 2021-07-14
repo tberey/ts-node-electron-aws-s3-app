@@ -84,6 +84,7 @@ This is a Electron application, built in Node and TypeScript, that delivers a cl
 * [Axios](https://axios-http.com/)
 * [fs](https://nodejs.org/api/fs.html)
 * [Rollbar](https://rollbar.com/)
+* [SimpleTxtLogger](https://www.npmjs.com/package/simple-txt-logger)
 * [ESLint](https://eslint.org/)
 * [MochaChai](https://mochajs.org/)
 
@@ -162,6 +163,7 @@ Below is the refined and confirmed roadmap, that has been planned for completion
 | Version | Date | Changes |
 |:---|:---|:---|
 | 1.0.0 | 2021-07-10 | <ul><li>Initial Commit.</li><li>Add inital directory structure and files.</li><li>Add Screenshots directory, and images.</li><li>Create and format README.md</li></ul> |
+| 1.0.1 | 2021-07-14 | <ul><li>Replace local SimpleTxtLogger with npm module SimpleTxtLogger.</li><li>Update Electron client script.</li><li>Update README.md</li></ul> |
 
 <br><hr><br>
 

@@ -1,9 +1,16 @@
 import axios from 'axios';
+import { SimpleTxtLogger } from 'simple-txt-logger';
+import { HelperService } from '../HelperService';
+import { ServerSetup } from '../../ServerSetup';
+
+const txtLogger: SimpleTxtLogger = new SimpleTxtLogger(HelperService.newDateTime(), 'Client', ServerSetup.appName);
+txtLogger.writeToLogFile('...::CLIENT-SIDE APPLICATION STARTING::...');
 
 /* eslint-disable */
 window.addEventListener('DOMContentLoaded', () => {
   document.getElementById('scriptTest')!.innerHTML = 'SUCCESS';
-
+  txtLogger.writeToLogFile('Client Ready to Serve.');
+  
   document.getElementById('list-buckets-submit')!.addEventListener('click', async () => {
     (<HTMLInputElement>document.getElementById('list-buckets-submit')).disabled = true;
     document.getElementById('list-buckets-list')!.innerHTML = '';

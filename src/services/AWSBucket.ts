@@ -1,5 +1,5 @@
 import { Rollbar } from './Rollbar';
-import { SimpleTxtLogger } from './SimpleTxtLogger';
+import { SimpleTxtLogger } from 'simple-txt-logger';
 import { HelperService } from './HelperService';
 import aws, { S3 } from 'aws-sdk';
 import fs from 'fs';
@@ -247,7 +247,6 @@ export class AWSBucket {
 
         let status: number | undefined;
         const fsFile: fs.ReadStream = fs.createReadStream(filePath);
-        
 
         const params: S3.PutObjectRequest = {
             Bucket: bucketName,

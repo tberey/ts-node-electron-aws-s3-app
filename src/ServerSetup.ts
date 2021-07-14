@@ -1,5 +1,5 @@
 import { Rollbar } from './services/Rollbar';
-import { SimpleTxtLogger } from './services/SimpleTxtLogger';
+import { SimpleTxtLogger } from 'simple-txt-logger';
 import { Electron } from './services/Electron';
 import { AWSBucket } from './services/AWSBucket';
 import { HelperService } from './services/HelperService';
@@ -44,7 +44,6 @@ export class ServerSetup {
         this.serverStart();
         this.electronInit();
 
-        
         /*// TESTING: This block can be used to not run electron in the event of testing, for the deployment pipeline.
         if (testing) return;
         const Electron2 = require('./services/Electron').Electron;

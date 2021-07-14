@@ -1,4 +1,4 @@
-import { SimpleTxtLogger } from './SimpleTxtLogger';
+import { SimpleTxtLogger } from 'simple-txt-logger';
 import rollbar from 'rollbar';
 
 export class Rollbar {
