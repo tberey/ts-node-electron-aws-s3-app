@@ -17,7 +17,7 @@ export class Rollbar {
         });
 
         this.rollbarInfo(`Rollbar Successfully Configured with Application: ${appName}.`);
-        this.txtLogger.writeToLogFile('Initialised Logging: Rollbar Setup.');
+        this.txtLogger.writeToLogFile('Initialized Logging: Rollbar Setup.');
     }
 
     public rollbarInfo(info:Error | string): void {

@@ -136,7 +136,7 @@ This is a electron application, which means it runs on your system, rather than 
 
 ### Screenshots
 
-Logginf Sample:
+Logging Sample:
 
 ![Screenshot#1](https://github.com/tberey/ts-node-electron-aws-s3-app/blob/development/screenshots/local-logs-sample1.png?raw=true)
 
@@ -162,8 +162,9 @@ Below is the refined and confirmed roadmap, that has been planned for completion
 
 | Version | Date | Changes |
 |:---|:---|:---|
-| 1.0.0 | 2021-07-10 | <ul><li>Initial Commit.</li><li>Add inital directory structure and files.</li><li>Add Screenshots directory, and images.</li><li>Create and format README.md</li></ul> |
+| 1.0.0 | 2021-07-10 | <ul><li>Initial Commit.</li><li>Add initial directory structure and files.</li><li>Add Screenshots directory, and images.</li><li>Create and format README.md</li></ul> |
 | 1.0.1 | 2021-07-14 | <ul><li>Replace local SimpleTxtLogger with npm module SimpleTxtLogger.</li><li>Update Electron client script.</li><li>Update README.md</li></ul> |
+| 1.0.2 | 2021-08-03 | <ul><li>Fix spelling.</li><li>Update README.md</li></ul> |
 
 <br><hr><br>
 
@@ -191,7 +192,7 @@ Contributions are welcomed and, of course, **greatly appreciated**.
 * [Issues & Requests][issues-url]
 * [My Other Projects](https://github.com/tberey?tab=repositories)
 * [Personal Website](https://tberey.github.io/)
-* [Linked In](https://uk.linkedin.com/in/thomas-berey-2a1860129)
+* [Linked In](https://uk.linkedin.com/in/thomas-berey)
 
 <br>
 
@@ -221,5 +222,5 @@ Contributions are welcomed and, of course, **greatly appreciated**.
 [issues-shield]: https://img.shields.io/github/issues/tberey/ts-node-electron-aws-s3-app.svg
 [issues-url]: https://github.com/tberey/ts-node-electron-aws-s3-app/issues
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?logo=linkedin&colorB=555
-[linkedin-url]: https://uk.linkedin.com/in/thomas-berey-2a1860129
+[linkedin-url]: https://uk.linkedin.com/in/thomas-berey
 [project-url]: https://github.com/tberey/ts-node-electron-aws-s3-app/projects

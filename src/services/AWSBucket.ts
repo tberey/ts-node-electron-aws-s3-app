@@ -14,7 +14,7 @@ export class AWSBucket {
     private txtLogger: SimpleTxtLogger;
     private rollbarLogger: Rollbar;
 
-    // Initialise the AWS Connection and Client.
+    // Initialize the AWS Connection and Client.
     constructor(txtLogger: SimpleTxtLogger, rollbarLogger: Rollbar) {
         this.txtLogger = txtLogger;
         this.rollbarLogger = rollbarLogger;
