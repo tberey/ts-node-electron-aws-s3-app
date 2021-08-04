@@ -1,4 +1,4 @@
-import { SimpleTxtLogger } from './SimpleTxtLogger';
+import { SimpleTxtLogger } from 'simple-txt-logger';
 import rollbar from 'rollbar';
 
 export class Rollbar {
@@ -17,7 +17,7 @@ export class Rollbar {
         });
 
         this.rollbarInfo(`Rollbar Successfully Configured with Application: ${appName}.`);
-        this.txtLogger.writeToLogFile('Initialised Logging: Rollbar Setup.');
+        this.txtLogger.writeToLogFile('Initialized Logging: Rollbar Setup.');
     }
 
     public rollbarInfo(info:Error | string): void {

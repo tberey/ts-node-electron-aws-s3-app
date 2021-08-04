@@ -1,5 +1,5 @@
 import { Rollbar } from './Rollbar';
-import { SimpleTxtLogger } from './SimpleTxtLogger';
+import { SimpleTxtLogger } from 'simple-txt-logger';
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
 

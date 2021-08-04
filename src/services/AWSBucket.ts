@@ -1,5 +1,5 @@
 import { Rollbar } from './Rollbar';
-import { SimpleTxtLogger } from './SimpleTxtLogger';
+import { SimpleTxtLogger } from 'simple-txt-logger';
 import { HelperService } from './HelperService';
 import aws, { S3 } from 'aws-sdk';
 import fs from 'fs';
@@ -14,7 +14,7 @@ export class AWSBucket {
     private txtLogger: SimpleTxtLogger;
     private rollbarLogger: Rollbar;
 
-    // Initialise the AWS Connection and Client.
+    // Initialize the AWS Connection and Client.
     constructor(txtLogger: SimpleTxtLogger, rollbarLogger: Rollbar) {
         this.txtLogger = txtLogger;
         this.rollbarLogger = rollbarLogger;
@@ -247,7 +247,6 @@ export class AWSBucket {
 
         let status: number | undefined;
         const fsFile: fs.ReadStream = fs.createReadStream(filePath);
-        
 
         const params: S3.PutObjectRequest = {
             Bucket: bucketName,

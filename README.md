@@ -84,6 +84,7 @@ This is a Electron application, built in Node and TypeScript, that delivers a cl
 * [Axios](https://axios-http.com/)
 * [fs](https://nodejs.org/api/fs.html)
 * [Rollbar](https://rollbar.com/)
+* [SimpleTxtLogger](https://www.npmjs.com/package/simple-txt-logger)
 * [ESLint](https://eslint.org/)
 * [MochaChai](https://mochajs.org/)
 
@@ -127,17 +128,26 @@ For help or guidance in downloading and running the application, see the followi
 ## Usage
 This is a electron application, which means it runs on your system, rather than a browser web app (yes, electron is technically just doing what a web browser does).<br>As Such, simply install and run this application and the window will load automatically as if running an executable.
 
-| Endpoint | Action/Desc. | Full URI <i>(hosted locally, for some port; e.g.: 3000)</i> |
-|:---|:---|:---|
-| <ul><li>"/"</li></ul> | Status: 200 | <ul><li>"http://localhost:3000/"</li></ul> |
+| Endpoint | Action/Desc. | Full URI <i>(hosted locally, on some port; e.g.: 3000)</i> | Request Type |
+|:---|:---|:---|:---|
+| <ul><li>"/"</li></ul> | Empty response body, but returns a 200 status. | <ul><li>"http://localhost:3000/"</li></ul> | GET |
+| <ul><li>"/listBuckets"</li></ul> | Lists all buckets that currently exist. | <ul><li>"http://localhost:3000/listBuckets"</li></ul> | GET |
+| <ul><li>"/findBucket"</li></ul> | Attempt to find the passed bucket name. | <ul><li>"http://localhost:3000/findBucket?bucket=BUCKET_NAME"</li></ul> | GET |
+| <ul><li>"/listObjects"</li></ul> | Lists all objects contained within a passed bucket, if the bucket exists. | <ul><li>"http://localhost:3000/listObjects?bucket=BUCKET_NAME"</li></ul> | GET |
+| <ul><li>"/findObject"</li></ul> | Attempt to find passed object, in the passed bucket, if the bucket exists. | <ul><li>"http://localhost:3000/findObject?bucket=BUCKET_NAME&object=OBJECT_NAME"</li></ul> | GET |
+| <ul><li>"/createBucket"</li></ul> | Create a new empty bucket, if one with the same name does not already exist. | <ul><li>"http://localhost:3000/createBucket"</li></ul> | POST |
+| <ul><li>"/uploadFile"</li></ul> | Upload a local file to a specified bucket, if that bucket exists. | <ul><li>"http://localhost:3000/uploadFile"</li></ul> | POST |
+| <ul><li>"/downloadFile"</li></ul> | Download a remote file from a specified bucket, if that bucket exists, and the file can be found. | <ul><li>"http://localhost:3000/downloadFile"</li></ul> | POST |
+| <ul><li>"/deleteBucket"</li></ul> | Delete a passed bucket, if that bucket exists and it is empty. | <ul><li>"http://localhost:3000/deleteBucket"</li></ul> | DELETE |
+| <ul><li>"/emptyBucket"</li></ul> | Empty bucket by deleting all containing objects, if the supplied bucket exists and not already empty. | <ul><li>"http://localhost:3000/emptyBucket"</li></ul> | DELETE |
 
 <br>
 
 ### Screenshots
 
-Logginf Sample:
+Logging Sample:
 
-![Screenshot#1](https://github.com/tberey/tomco-hq/blob/development/screenshots/local-logs-sample.png?raw=true)
+![Screenshot#1](https://github.com/tberey/ts-node-electron-aws-s3-app/blob/development/screenshots/local-logs-sample1.png?raw=true)
 
 <br><hr><br>
 
@@ -161,7 +171,10 @@ Below is the refined and confirmed roadmap, that has been planned for completion
 
 | Version | Date | Changes |
 |:---|:---|:---|
-| 1.0.0 | 2021-07-10 | <ul><li>Initial Commit.</li><li>Add inital directory structure and files.</li><li>Add Screenshots directory, and images.</li><li>Create and format README.md</li></ul> |
+| 1.0.0 | 2021-07-10 | <ul><li>Initial Commit.</li><li>Add initial directory structure and files.</li><li>Add Screenshots directory, and images.</li><li>Create and format README.md</li></ul> |
+| 1.0.1 | 2021-07-14 | <ul><li>Replace local SimpleTxtLogger with npm module SimpleTxtLogger.</li><li>Update Electron client script.</li><li>Update README.md</li></ul> |
+| 1.0.2 | 2021-08-03 | <ul><li>Fix spelling.</li><li>Update README.md</li></ul> |
+| 1.0.3 | 2021-08-04 | <ul><li>Update README.md</li></ul> |
 
 <br><hr><br>
 
@@ -189,7 +202,7 @@ Contributions are welcomed and, of course, **greatly appreciated**.
 * [Issues & Requests][issues-url]
 * [My Other Projects](https://github.com/tberey?tab=repositories)
 * [Personal Website](https://tberey.github.io/)
-* [Linked In](https://uk.linkedin.com/in/thomas-berey-2a1860129)
+* [Linked In](https://uk.linkedin.com/in/thomas-berey)
 
 <br>
 
@@ -219,5 +232,5 @@ Contributions are welcomed and, of course, **greatly appreciated**.
 [issues-shield]: https://img.shields.io/github/issues/tberey/ts-node-electron-aws-s3-app.svg
 [issues-url]: https://github.com/tberey/ts-node-electron-aws-s3-app/issues
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?logo=linkedin&colorB=555
-[linkedin-url]: https://uk.linkedin.com/in/thomas-berey-2a1860129
+[linkedin-url]: https://uk.linkedin.com/in/thomas-berey
 [project-url]: https://github.com/tberey/ts-node-electron-aws-s3-app/projects
