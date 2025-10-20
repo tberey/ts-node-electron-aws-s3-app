@@ -53,7 +53,7 @@
     "express": "^4.17.1",
     "fs": "0.0.1-security",
     "mocha": "^8.4.0",
-    "rollbar": "^2.21.1",
+    "rollbar": "^2.26.5",
     "simple-txt-logger": "^1.0.5"
   }
 }
